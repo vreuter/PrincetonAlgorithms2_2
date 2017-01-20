@@ -38,7 +38,8 @@ public class SAP {
     }
 
     /**
-     * Determine the common ancestor that creates the SAP from v to w.
+     * Determine the common ancestor that creates the
+     * shortest ancestral path from vertex v to vertex w.
      *
      * @param v one SAP query vertex index
      * @param w other SAP query vertex index
@@ -49,22 +50,51 @@ public class SAP {
         return sapComponents == null ? NO_ANCESTOR : sapComponents.ancestor();
     }
 
-    // length of shortest ancestral path between any vertex in v and any vertex in w; -1 if no such path
+    /**
+     * Determing length of shortest ancestral path between
+     * any vertex in v and any vertex in w. Return -1 if an
+     * not a single common ancestor exists between any vertex
+     * in v and any vertex in w.
+     *
+     * @param v first set of SAP query vertices
+     * @param w other set of SAP query vertices
+     * @return lentgh of SAP; -1 if nonexistent
+     */
     public int length(Iterable<Integer> v, Iterable<Integer> w) {
-
+        Paths sapComponents = sap(v, w);
+        return sapComponents == null ? NO_ANCESTOR : sapComponents.length();
     }
 
-    // a common ancestor that participates in shortest ancestral path; -1 if no such path
+    /**
+     * Determine the common ancestor that creates the
+     * shortest ancestral path from any vertex in v to
+     * any vertex in w. Return -1 if no such path exists.
+     *
+     * @param v first set of SAP query vertices
+     * @param w other set of SAP query vertices
+     * @return index of common ancestor that creates the SAP; -1 if nonexistent
+     */
     public int ancestor(Iterable<Integer> v, Iterable<Integer> w) {
-
+        Paths sapComponents = sap(v, w);
+        return sapComponents == null ? NO_ANCESTOR : sapComponents.ancestor();
     }
 
 
     private Paths sap(int v, int w) {
-
         BreadthFirstDirectedPaths fromV = new BreadthFirstDirectedPaths(this.G, v);
         BreadthFirstDirectedPaths fromW = new BreadthFirstDirectedPaths(this.G, w);
+        return processPaths(fromV, fromW);
+    }
 
+
+    private Paths sap(int Iterable<Integer> v, int Iterable<Integer> w) {
+        BreadthFirstDirectedPaths fromV = new BreadthFirstDirectedPaths(this.G, v);
+        BreadthFirstDirectedPaths fromW = new BreadthFirstDirectedPaths(this.G, w);
+        return processPaths(fromV, fromW);
+    }
+
+
+    private Paths processPaths(BreadthFirstDirectedPaths fromV, BreadthFirstDirectedPaths fromW) {
         List<Integer> common = new LinkedList<Integer>();
         for (int i = 0; i < G.V(); i++) {
             if (fromV.hasPathTo(i) && fromW.hasPathTo(i)) common.add(i);
@@ -84,7 +114,6 @@ public class SAP {
         }
 
         return new Paths(fromV.pathTo(closestAncestor), fromW.pathTo(closestAncestor));
-
     }
 
 
