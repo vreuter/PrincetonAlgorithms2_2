@@ -5,6 +5,7 @@ import java.util.Set;
 
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
 import edu.princeton.cs.algs4.Digraph;
+import edu.princeton.cs.algs4.In;
 
 /**
  * SAP (shortest ancestral path) ADT, motivated
@@ -159,6 +160,21 @@ public class SAP {
         public int ancestor() {return this.ancestor;}
         public int length() {return this.length;}
 
+    }
+
+
+    /* Crude testing */
+    public static void main(String[] args) {
+        In in = new In(args[0]);
+        Digraph G = new Digraph(in);
+        SAP sap = new SAP(G);
+        while (!StdIn.isEmpty()) {
+            int v = StdIn.readInt();
+            int w = StdIn.readInt();
+            int length = sap.length(v, w);
+            int ancestor = sap.ancestor(v, w);
+            StdOut.printf("length = %d, ancestor = %d\n", length, ancestor);
+        }
     }
 
 
