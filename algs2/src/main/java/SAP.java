@@ -19,14 +19,20 @@ import edu.princeton.cs.algs4.StdOut;
 public class SAP {
 
 
+    // Length and ancestor sentinel for when there's no common ancestor
     private static final int NO_ANCESTOR = -1;
+
+    // Underlying (very possibly non-acyclic) directed graph
     private final Digraph G;
 
 
     /**
      * Directed graph defines the SAP ADT.
+     *
+     * @param G directed graph to encoding data for this SAP instance
      */
     public SAP(Digraph G) {this.G = G;}
+
 
     /**
      * Determing length of shortest ancestral path between v and w.
@@ -41,6 +47,7 @@ public class SAP {
         return sapComponents == null ? NO_ANCESTOR : sapComponents.length();
     }
 
+
     /**
      * Determine the common ancestor that creates the
      * shortest ancestral path from vertex v to vertex w.
@@ -53,6 +60,7 @@ public class SAP {
         Paths sapComponents = sap(v, w);
         return sapComponents == null ? NO_ANCESTOR : sapComponents.ancestor();
     }
+
 
     /**
      * Determing length of shortest ancestral path between
@@ -69,6 +77,7 @@ public class SAP {
         return sapComponents == null ? NO_ANCESTOR : sapComponents.length();
     }
 
+
     /**
      * Determine the common ancestor that creates the
      * shortest ancestral path from any vertex in v to
@@ -84,6 +93,17 @@ public class SAP {
     }
 
 
+    /**
+     * Determine shortest path through common ancestor between v and w.
+     * If v and w share no common ancestor, return null. Otherwise, return
+     * a Paths ADT that stores each component path (v to ancestor and w to
+     * ancestor), along with total path length and the common ancestor.
+     *
+     * @param v first query vertex
+     * @param w other query vertex
+     * @return null if no common ancestor, otherwise ancestor- and length-storing
+     * ADT representing the shortest ancestral path
+     */
     private Paths sap(int v, int w) {
         BreadthFirstDirectedPaths fromV = new BreadthFirstDirectedPaths(this.G, v);
         BreadthFirstDirectedPaths fromW = new BreadthFirstDirectedPaths(this.G, w);
@@ -91,6 +111,19 @@ public class SAP {
     }
 
 
+    /**
+     * Determine shortest path through common ancestor between any vertex
+     * in v and any vertex in w. If no pair of vertices in which on vertex
+     * comes from v and the other comes from w share a common ancestor,
+     * return null. Otherwise, return a Paths ADT that stores each component
+     * path (v to ancestor and w to ancestor), along with t
+     * otal path length and the common ancestor.
+     *
+     * @param v first query vertex
+     * @param w other query vertex
+     * @return null if no common ancestor, otherwise ancestor- and
+     * length-storing ADT representing the shortest ancestral path
+     */
     private Paths sap(Iterable<Integer> v, Iterable<Integer> w) {
         BreadthFirstDirectedPaths fromV = new BreadthFirstDirectedPaths(this.G, v);
         BreadthFirstDirectedPaths fromW = new BreadthFirstDirectedPaths(this.G, w);
@@ -98,6 +131,21 @@ public class SAP {
     }
 
 
+    /**
+     * Following to BFS in G from one vertex and BFS in G from another vertex,
+     * process results to determine the length of the shortest path through a
+     * common ancestor between the two vertices from which the BFSs were begun.
+     * The result is an ADT that stores the path from each of the two source
+     * vertices to the common ancestor, along with the paths themselves and
+     * total path length. The result is null if the BFS source vertices share
+     * no common ancestor.
+     *
+     * @param fromV ADT of BFS results from a single vertex in G
+     * @param fromW ADT of BFS results from another vertex in G
+     * @return ADT that stores the path from each of the two source
+     * vertices to the common ancestor, along with the paths themselves and
+     * total path length, null if BFS source vertices share no common ancestor
+     */
     private Paths processPaths(BreadthFirstDirectedPaths fromV, BreadthFirstDirectedPaths fromW) {
         List<Integer> common = new LinkedList<Integer>();
         for (int i = 0; i < G.V(); i++) {
@@ -121,13 +169,20 @@ public class SAP {
     }
 
 
+    /** Store path from one vertex to nearest common ancestor shared with another vertex. */
     private final class Paths {
 
+        // Components of path to nearest common ancestor
         private Iterable<Integer> fromA;
         private Iterable<Integer> fromB;
+
+        // Nearest common ancestor
         private final int ancestor;
+
+        // Length of path between vertices through nearest common ancestor
         private final int length;
 
+        /* Process component paths to determine total path length and common ancestor. */
         private Paths(Iterable<Integer> fromA, Iterable<Integer> fromB) {
 
             this.fromA = fromA;
@@ -136,32 +191,38 @@ public class SAP {
             ArrayList<Integer> aPath = path(fromA);
             ArrayList<Integer> bPath = path(fromB);
 
+            /* Find component path lengths and common ancestor candidate. */
             int numA = aPath.size();
             int numB = bPath.size();
             int ancestorA = aPath.get(numA - 1);
             int ancestorB = bPath.get(numB - 1);
 
+            // Validate that nearest ancestor really is shared/common.
             if (ancestorA != ancestorB) {
                 String errMsg = String.format(
                         "Ancestor disagreement: %d and %d", ancestorA, ancestorB
                 );
                 throw new IllegalArgumentException(errMsg);
             }
+
+            /* Set nearest common ancestor and length of path through it. */
             this.ancestor = ancestorA;
-            this.length = numA + numB - 1;
+            this.length = numA + numB - 2;
 
         }
 
+        /* Accessor methods for processed/computed data */
+        public Iterator<Integer> fromA() {return this.fromA.iterator();}
+        public Iterator<Integer> fromB() {return this.fromB.iterator();}
+        public int ancestor() {return this.ancestor;}
+        public int length() {return this.length;}
+
+        /* Create ArrayList from Iterable. */
         private ArrayList<Integer> path(Iterable<Integer> p) {
             ArrayList<Integer> path = new ArrayList<Integer>();
             for (int i : p) {path.add(i);}
             return path;
         }
-
-        public Iterator<Integer> fromA() {return this.fromA.iterator();}
-        public Iterator<Integer> fromB() {return this.fromB.iterator();}
-        public int ancestor() {return this.ancestor;}
-        public int length() {return this.length;}
 
     }
 
