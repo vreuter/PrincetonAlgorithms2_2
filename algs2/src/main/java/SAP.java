@@ -106,6 +106,8 @@ public class SAP {
      * ADT representing the shortest ancestral path
      */
     private Paths sap(int v, int w) {
+        validate(v);
+        validate(w);
         BreadthFirstDirectedPaths fromV = new BreadthFirstDirectedPaths(this.G, v);
         BreadthFirstDirectedPaths fromW = new BreadthFirstDirectedPaths(this.G, w);
         return processPaths(fromV, fromW);
@@ -126,6 +128,8 @@ public class SAP {
      * length-storing ADT representing the shortest ancestral path
      */
     private Paths sap(Iterable<Integer> v, Iterable<Integer> w) {
+        for (int vertex : v) validate(vertex);
+        for (int vertex : w) validate(vertex);
         BreadthFirstDirectedPaths fromV = new BreadthFirstDirectedPaths(this.G, v);
         BreadthFirstDirectedPaths fromW = new BreadthFirstDirectedPaths(this.G, w);
         return processPaths(fromV, fromW);
@@ -167,6 +171,17 @@ public class SAP {
         }
 
         return new Paths(fromV.pathTo(closestAncestor), fromW.pathTo(closestAncestor));
+    }
+
+
+    /* Per assignment specification, throw index OOB exception for low/high vertex. */
+    private void validate(int v) {
+        int upperBound = G.V() - 1;
+        if (v < 0 || v > upperBound) {
+            String errMsg = String.format("Need vertex v; 0 <= v <= %d; got %d",
+                                          upperBound, v);
+            throw new IndexOutOfBoundsException(errMsg);
+        }
     }
 
 
