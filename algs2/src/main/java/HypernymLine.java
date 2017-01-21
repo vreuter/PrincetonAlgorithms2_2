@@ -7,7 +7,7 @@ import java.util.Set;
  *
  * @author Vince Reuter
  */
-public final class HypernymLine {
+final class HypernymLine {
 
 
     private static final String FIELDS_DELIMITER = ",";
@@ -34,7 +34,7 @@ public final class HypernymLine {
 
 
     public int id() {return this.id;}
-    public Set<Integer> hypernyms() {return this.hypIds;}
+    public Iterable<Integer> hypernyms() {return this.hypIds;}
 
 
 }
