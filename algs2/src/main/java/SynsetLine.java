@@ -8,7 +8,7 @@ final class SynsetLine {
 
     /* Parsing constants */
     private static final String FIELDS_DELIMITER = ",";
-    private static final String NOUNS_DELIMITER = ", ";
+    private static final String NOUNS_DELIMITER = " ";
     private static final int NOUNS_INDEX = 1;
     private static final int GLOSS_INDEX = 2;
 
