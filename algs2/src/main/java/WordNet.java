@@ -107,6 +107,9 @@ public class WordNet {
     public int distance(String nounA, String nounB) {
         validateWord(nounA);
         validateWord(nounB);
+        Iterable<Integer> aSynIds = this.synIdsByWord.get(nounA);
+        Iterable<Integer> bSynIds = this.synIdsByWord.get(nounA);
+        return new SAP(this.G).length(aSynIds, bSynIds);
     }
 
 
@@ -121,6 +124,10 @@ public class WordNet {
     public String sap(String nounA, String nounB) {
         validateWord(nounA);
         validateWord(nounB);
+        Iterable<Integer> aSynIds = this.synIdsByWord.get(nounA);
+        Iterable<Integer> bSynIds = this.synIdsByWord.get(nounA);
+        int ancestorHypernymID = new SAP(this.G).ancestor(aSynIds, bSynIds);
+        return this.synsets.get(ancestorHypernymID);
     }
 
 
