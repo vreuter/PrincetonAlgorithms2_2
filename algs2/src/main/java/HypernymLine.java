@@ -1,3 +1,4 @@
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,17 +25,17 @@ final class HypernymLine {
 
         this.id = Integer.parseInt(fields[ID_INDEX]);
 
-        Set<Integer> hypernymIndices = new HashSet<Integer>();
+        this.hypIds = new HashSet<Integer>();
+        if (fields.length == 1) return;         // No hypernyms
         for (String hypIdText : fields[HYPERNYM_SETS_INDEX].split(HYPERNYM_SETS_DELIMITER)) {
-            hypernymIndices.add(Integer.parseInt(hypIdText));
+            this.hypIds.add(Integer.parseInt(hypIdText));
         }
-        this.hypIds = hypernymIndices;
 
     }
 
 
     public int id() {return this.id;}
-    public Iterable<Integer> hypernyms() {return this.hypIds;}
+    public Set<Integer> hypernyms() {return Collections.unmodifiableSet(this.hypIds);}
 
 
 }

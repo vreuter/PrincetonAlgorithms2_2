@@ -64,12 +64,29 @@ public class WordNet {
         this.G = new Digraph(this.synsets.size());
         parser = new In(hypernyms);
         HypernymLine hypLine;
+        int root = -1;
+        int rootLine = -1;
+        int currLine = 1;
         while (parser.hasNextLine()) {
             hypLine = new HypernymLine(parser.readLine());
             int synId = hypLine.id();
-            for (int hypId : hypLine.hypernyms()) {
-                this.G.addEdge(synId, hypId);
+            Set<Integer> hypIds = hypLine.hypernyms();
+            if (hypIds.isEmpty()) {
+                if (root != -1) {
+                    String errMsg = String.format(
+                            "At least two root candidates (%d on line %d and %d on line %d)",
+                            root, rootLine, synId, currLine);
+                    throw new IllegalArgumentException(errMsg);
+                }
+                root = synId;
+                rootLine = currLine;
             }
+            else {
+                for (int hypId : hypLine.hypernyms()) {
+                    this.G.addEdge(synId, hypId);
+                }
+            }
+            currLine++;
         }
 
         if (!isRootedDAG()) throw new IllegalArgumentException("Not a rooted DAG");
