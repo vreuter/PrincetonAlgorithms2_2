@@ -89,7 +89,7 @@ public class WordNet {
             currLine++;
         }
 
-        if (!isRootedDAG()) throw new IllegalArgumentException("Not a rooted DAG");
+        if (new DirectedCycle(this.G).hasCycle()) throw new IllegalArgumentException("Cyclic digraph");
 
     }
 
@@ -148,21 +148,6 @@ public class WordNet {
         int ancestorHypernymID = new SAP(this.G).ancestor(aSynIds, bSynIds);
         return String.join(SYNSET_NOUNS_DELIMITER,
                            this.synsets.get(ancestorHypernymID).words());
-    }
-
-
-    /* After parsing input, determine if we have a rooted DAG as expected. */
-    private boolean isRootedDAG() {
-        // TODO: determine efficiency of DirectedCycle & rootedness detection.
-        if (new DirectedCycle(this.G).hasCycle()) return false;
-        boolean foundRoot = false;
-        for (int v = 0; v < G.V(); v++) {
-            if (this.G.outdegree(v) == 0) {
-                if (foundRoot) return false;
-                foundRoot = true;
-            }
-        }
-        return foundRoot;
     }
 
 
