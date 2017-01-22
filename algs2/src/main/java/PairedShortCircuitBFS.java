@@ -19,7 +19,8 @@ public class PairedShortCircuitBFS {
         public Paths(Iterable<Integer> fromA, Iterable<Integer> fromB) {
             this.fromA = fromA;
             this.fromB = fromB;
-            this.length = fromA.iterator().size() + fromB.iterator.size() - 1;
+            // TODO: set length.
+            this.length = 0;
         }
 
         public Iterable<Integer> fromA() {return this.fromA;}
@@ -34,7 +35,8 @@ public class PairedShortCircuitBFS {
     public PairedShortCircuitBFS(Digraph G) {this.G = G;}
 
     public Paths sapPaths(int v1, int v2) {
-
+        // TODO: implement.
+        return null;
     }
 
 

@@ -7,7 +7,7 @@ import java.util.Set;
  *
  * @author Vince Reuter
  */
-public class Sysnet {
+public class Synset {
 
     private final String gloss;
     private Set<String> words;
@@ -28,7 +28,7 @@ public class Sysnet {
      * @param definintion meaning for the new synset
      * @param words some initial synset members
      */
-    public Synset(String gloss, Iterable<String> words) {
+    public Synset(String gloss, String[] words) {
         this(gloss);
         this.add(words);
     }
@@ -60,7 +60,7 @@ public class Sysnet {
      *
      * @param words new members for the synset
      */
-    public void add(Iterable<String> words) {
+    public void add(String[] words) {
         for (String w : words) {this.words.add(w);}
     }
 

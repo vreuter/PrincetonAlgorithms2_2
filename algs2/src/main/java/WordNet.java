@@ -23,6 +23,8 @@ import edu.princeton.cs.algs4.In;
 public class WordNet {
 
 
+    private static final String SYNSET_NOUNS_DELIMITER = " ";
+
     private ArrayList<Synset> synsets;
     private Map<String, Set<Integer>> synIdsByWord;
     private Digraph G;
@@ -45,14 +47,13 @@ public class WordNet {
         this.synIdsByWord = new HashMap<String, Set<Integer>>();
         this.synsets = new ArrayList<Synset>();
 
-        int synsetID = 0;
-        In synsetParser = new In(synsets);
-        SynsetLine synLine;
-
         /* Parse the synset words and definitions. */
-        while (synsetParser.hasNextLine()) {
-            synLine = new SynsetLine(synsetID, synsetParser.readLine());
-            synsets.add(new Synset(synLine.gloss(), synLine.nouns()));
+        int synsetID = 0;
+        In parser = new In(synsets);
+        SynsetLine synLine;
+        while (parser.hasNextLine()) {
+            synLine = new SynsetLine(parser.readLine());
+            this.synsets.add(new Synset(synLine.gloss(), synLine.nouns()));
             // Update word lookup structure.
             this.indexWords(synsetID, synLine.nouns());
             synsetID++;
@@ -61,10 +62,11 @@ public class WordNet {
         /* Connect the synsets by hypernym relationships. */
         // After parsing synsets, we know size.
         this.G = new Digraph(this.synsets.size());
-        In hypernymParser = new In(hypernyms);
-        while (hypernymParser.hasNextLine()) {
-            hypLine = hypernymParser.readLine();
-            int synID = hypLine.id();
+        parser = new In(hypernyms);
+        HypernymLine hypLine;
+        while (parser.hasNextLine()) {
+            hypLine = new HypernymLine(parser.readLine());
+            int synId = hypLine.id();
             for (int hypId : hypLine.hypernyms()) {
                 this.G.addEdge(synId, hypId);
             }
@@ -127,7 +129,8 @@ public class WordNet {
         Iterable<Integer> aSynIds = this.synIdsByWord.get(nounA);
         Iterable<Integer> bSynIds = this.synIdsByWord.get(nounA);
         int ancestorHypernymID = new SAP(this.G).ancestor(aSynIds, bSynIds);
-        return this.synsets.get(ancestorHypernymID);
+        return String.join(SYNSET_NOUNS_DELIMITER,
+                           this.synsets.get(ancestorHypernymID).words());
     }
 
 
@@ -136,7 +139,7 @@ public class WordNet {
         // TODO: determine efficiency of DirectedCycle & rootedness detection.
         if (new DirectedCycle(this.G).hasCycle()) return false;
         boolean foundRoot = false;
-        for (int v = 0; v < G.V() v++) {
+        for (int v = 0; v < G.V(); v++) {
             if (this.G.outdegree(v) == 0) {
                 if (foundRoot) return false;
                 foundRoot = true;
@@ -156,10 +159,10 @@ public class WordNet {
 
 
     /* Update mapping from word to collection of its synset member IDs. */
-    private void indexWords(int synId, Iterable<String> words) {
+    private void indexWords(int synId, String[] words) {
         for (String w : words) {
-            if (!this.synIdsByWord.contains(w)) {
-                this.synIdsByWord.put(new HashSet<Integer>());
+            if (!this.synIdsByWord.containsKey(w)) {
+                this.synIdsByWord.put(w, new HashSet<Integer>());
             }
             this.synIdsByWord.get(w).add(synId);
         }
