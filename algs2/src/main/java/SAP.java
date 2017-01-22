@@ -246,7 +246,7 @@ public class SAP {
     }
 
 
-    /* Crude testing */
+    /* Crude testing, taken from assignment specification */
     public static void main(String[] args) {
         In in = new In(args[0]);
         Digraph G = new Digraph(in);

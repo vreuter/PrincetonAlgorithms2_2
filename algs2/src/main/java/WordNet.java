@@ -8,7 +8,7 @@ import edu.princeton.cs.algs4.Digraph;
 import edu.princeton.cs.algs4.DirectedCycle;
 import edu.princeton.cs.algs4.In;
 
-// TODO: corner cases, docstrings, exceptions.
+// TODO: corner cases, docstrings, exceptions, problem description and info links.
 
 
 /**
