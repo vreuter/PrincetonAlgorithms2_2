@@ -127,7 +127,7 @@ public class WordNet {
         validateWord(nounA);
         validateWord(nounB);
         Iterable<Integer> aSynIds = this.synIdsByWord.get(nounA);
-        Iterable<Integer> bSynIds = this.synIdsByWord.get(nounA);
+        Iterable<Integer> bSynIds = this.synIdsByWord.get(nounB);
         return new SAP(this.G).length(aSynIds, bSynIds);
     }
 
@@ -168,6 +168,12 @@ public class WordNet {
             }
             this.synIdsByWord.get(w).add(synId);
         }
+    }
+
+
+    // DEBUG
+    public String toString() {
+        return this.G.toString();
     }
 
 
