@@ -64,32 +64,16 @@ public class WordNet {
         this.G = new Digraph(this.synsets.size());
         parser = new In(hypernyms);
         HypernymLine hypLine;
-        int root = -1;
-        int rootLine = -1;
-        int currLine = 1;
         while (parser.hasNextLine()) {
             hypLine = new HypernymLine(parser.readLine());
             int synId = hypLine.id();
-            Set<Integer> hypIds = hypLine.hypernyms();
-            if (hypIds.isEmpty()) {
-                if (root != -1) {
-                    String errMsg = String.format(
-                            "At least two root candidates (%d on line %d and %d on line %d)",
-                            root, rootLine, synId, currLine);
-                    throw new IllegalArgumentException(errMsg);
-                }
-                root = synId;
-                rootLine = currLine;
+            for (int hypId : hypLine.hypernyms()) {
+                this.G.addEdge(synId, hypId);
             }
-            else {
-                for (int hypId : hypLine.hypernyms()) {
-                    this.G.addEdge(synId, hypId);
-                }
-            }
-            currLine++;
         }
 
-        if (new DirectedCycle(this.G).hasCycle()) throw new IllegalArgumentException("Cyclic digraph");
+        // Per assignment specification, IllegalArgumentException if not a rooted DAG.
+        this.checkRootDAG();
 
     }
 
@@ -151,7 +135,23 @@ public class WordNet {
     }
 
 
-    /* Throw IllegalArgumentException WordNet doesn't know given word. */
+    /* Throw IllegalArgumentException if input doesn't represent rooted DAG. */
+    private void checkRootDAG() {
+        int root = -1;
+        for (int v = 0; v < G.V(); v++) {
+            if (G.outdegree(v) == 0) {
+                if (root != -1) {
+                    String errMsg = String.format("At least two root candidates: %d and %d", root, v);
+                    throw new IllegalArgumentException(errMsg);
+                }
+                root = v;
+            }
+        }
+        if (new DirectedCycle(this.G).hasCycle()) throw new IllegalArgumentException("Cyclic digraph");
+    }
+
+
+    /* Throw IllegalArgumentException if WordNet doesn't know given word. */
     private void validateWord(String word) {
         if (this.isNoun(word)) return;
         throw new IllegalArgumentException(
