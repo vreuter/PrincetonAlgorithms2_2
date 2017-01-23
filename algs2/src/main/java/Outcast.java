@@ -1,6 +1,3 @@
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.StdOut;
 

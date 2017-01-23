@@ -2,7 +2,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
 
 import edu.princeton.cs.algs4.BreadthFirstDirectedPaths;
 import edu.princeton.cs.algs4.Digraph;
@@ -32,10 +31,11 @@ public class SAP {
 
     /**
      * Directed graph defines the SAP ADT.
+     * For immutability, create defensive copy.
      *
      * @param G directed graph to encoding data for this SAP instance
      */
-    public SAP(Digraph G) {this.G = G;}
+    public SAP(Digraph G) {this.G = new Digraph(G);}
 
 
     /**
